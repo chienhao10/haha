@@ -22,7 +22,7 @@ namespace LuVTryndamere
             Loading.OnLoadingComplete += Loading_OnLoadingComplete;
         }
 
-        private static AIHeroClient User = User;
+        private static AIHeroClient User = Player.Instance;
 
         private static Spell.Active Q;
 
@@ -136,9 +136,9 @@ namespace LuVTryndamere
                 foreach (var enemy in EntityManager.Heroes.Enemies.Where((e => e.IsValid && e.IsHPBarRendered)))
             {
                 var AADmg = User.GetAutoAttackDamage((enemy));
-                var aacount = Math.Ceiling(enemy.Health / AADmg);
+                var aacount = (int)(enemy.Health / AADmg);
 
-                Drawing.DrawText(enemy.HPBarPosition, System.Drawing.Color.NavajoWhite, string.Format("Damage: {0} ({1})", enemy.Health, string.Concat(aacount > 0 ? "+" : "", aacount)), 10);
+                Drawing.DrawText(enemy.HPBarPosition.X + 15, enemy.HPBarPosition.Y + 200, System.Drawing.Color.NavajoWhite, string.Format("HP: {0} ({1})", enemy.Health, string.Concat(aacount > 0 ? "AA:" : "", aacount)), 10);
             }
             /*
             DrawKillable();
@@ -242,7 +242,7 @@ namespace LuVTryndamere
 
                     if (hero.IsVisible)
                     {
-                        Drawing.DrawText(Drawing.Width * 0.13f, Drawing.Height * 0.1f + i, color, " Enemy!敌人");
+                        Drawing.DrawText(Drawing.Width * 0.13f, Drawing.Height * 0.1f + i, color, "");
                     }
 
                     i += 20f;
