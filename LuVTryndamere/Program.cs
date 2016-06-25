@@ -99,7 +99,7 @@ namespace LuVTryndamere
             }
             if (DrawingsMenu["text"].Cast<CheckBox>().CurrentValue)
             {
-                if (!R.IsReady() && !User.HasBuff("UndyingRage") && !User.IsDead)
+                if (!R.IsReady() && R.Level > 0 && !User.HasBuff("UndyingRage") && !User.IsDead)
                 {
                     Drawing.DrawText(
                         User.HPBarPosition.X + 50, User.HPBarPosition.Y + 215,
@@ -154,6 +154,16 @@ namespace LuVTryndamere
             if (Orbwalker.ActiveModesFlags.Equals(Orbwalker.ActiveModes.Combo))
             {
                 Combo();
+
+            }
+            if (ComboMenu["useQ"].Cast<CheckBox>().CurrentValue)
+            {
+                var autoQ = ComboMenu["useQ"].Cast<CheckBox>().CurrentValue;
+                var healthQ = MiscMenu["qhp"].Cast<Slider>().CurrentValue;
+                if (autoQ && !User.HasBuff("UndyingRage") && User.HealthPercent < healthQ)
+                {
+                    Q.Cast();
+                }
             }
         }
 
@@ -171,16 +181,6 @@ namespace LuVTryndamere
                 if (target.IsValidTarget(E.Range) && E.IsReady() && pred.HitChance >= HitChance.High)
                 {
                     E.Cast(target);
-                }
-            }
-
-            if (ComboMenu["useQ"].Cast<CheckBox>().CurrentValue)
-            {
-                var autoQ = ComboMenu["useQ"].Cast<CheckBox>().CurrentValue;
-                var healthQ = MiscMenu["qhp"].Cast<Slider>().CurrentValue;
-                if (autoQ && !User.HasBuff("UndyingRage") && User.HealthPercent < healthQ)
-                {
-                    Q.Cast();
                 }
             }
 
