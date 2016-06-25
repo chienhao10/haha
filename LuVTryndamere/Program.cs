@@ -22,7 +22,7 @@ namespace LuVTryndamere
             Loading.OnLoadingComplete += Loading_OnLoadingComplete;
         }
 
-        private static AIHeroClient User = Player.Instance;
+        private static AIHeroClient User = User;
 
         private static Spell.Active Q;
 
@@ -69,7 +69,7 @@ namespace LuVTryndamere
 
             DrawingsMenu.Add("nocds", new CheckBox("Draw Only No CoolDown Spells"));
             DrawingsMenu.Add("text", new CheckBox("Show R Text"));
-            DrawingsMenu.Add("track", new CheckBox("Track"));
+            DrawingsMenu.Add("Track", new CheckBox("Track"));
             DrawingsMenu.Add("aacount", new CheckBox("Show AA To Kill"));
 
             foreach (var Spell in SpellList)
@@ -99,17 +99,17 @@ namespace LuVTryndamere
             }
             if (DrawingsMenu["text"].Cast<CheckBox>().CurrentValue)
             {
-                if (!R.IsReady() && !Player.Instance.HasBuff("UndyingRage") && !Player.Instance.IsDead)
+                if (!R.IsReady() && !User.HasBuff("UndyingRage") && !User.IsDead)
                 {
                     Drawing.DrawText(
-                        Player.Instance.HPBarPosition.X + 50, Player.Instance.HPBarPosition.Y + 215,
+                        User.HPBarPosition.X + 50, User.HPBarPosition.Y + 215,
                         System.Drawing.Color.Red,
                         "R Not Ready");
                 }
-                if (Player.Instance.HasBuff("UndyingRage"))
+                if (User.HasBuff("UndyingRage"))
                 {
                     Drawing.DrawText(
-                        Player.Instance.HPBarPosition.X + 50, Player.Instance.HPBarPosition.Y + 215,
+                        User.HPBarPosition.X + 50, User.HPBarPosition.Y + 215,
                         System.Drawing.Color.Purple,
                         "R Actavited");
                 }
@@ -117,11 +117,11 @@ namespace LuVTryndamere
                 if (R.IsReady() && R.IsLearned)
                 {
                     Drawing.DrawText(
-                        Player.Instance.HPBarPosition.X + 50, Player.Instance.HPBarPosition.Y + 215,
+                        User.HPBarPosition.X + 50, User.HPBarPosition.Y + 215,
                         System.Drawing.Color.White,
                         "R Ready");
                 }
-                if (Player.Instance.IsDead)
+                if (User.IsDead)
                 {
                     return;
                 }
@@ -135,7 +135,7 @@ namespace LuVTryndamere
             if (DrawingsMenu.Get<CheckBox>("aacount").CurrentValue)
                 foreach (var enemy in EntityManager.Heroes.Enemies.Where((e => e.IsValid && e.IsHPBarRendered)))
             {
-                var AADmg = Player.Instance.GetAutoAttackDamage((enemy));
+                var AADmg = User.GetAutoAttackDamage((enemy));
                 var aacount = Math.Ceiling(enemy.Health / AADmg);
 
                 Drawing.DrawText(enemy.HPBarPosition, System.Drawing.Color.NavajoWhite, string.Format("Damage: {0} ({1})", enemy.Health, string.Concat(aacount > 0 ? "+" : "", aacount)), 10);
@@ -147,7 +147,7 @@ namespace LuVTryndamere
 
         private static void Game_OnTick(EventArgs args)
         {
-            if (Player.Instance.IsDead)
+            if (User.IsDead)
             {
                 return;
             }
@@ -178,7 +178,7 @@ namespace LuVTryndamere
             {
                 var autoQ = ComboMenu["useQ"].Cast<CheckBox>().CurrentValue;
                 var healthQ = MiscMenu["qhp"].Cast<Slider>().CurrentValue;
-                if (autoQ && !Player.Instance.HasBuff("UndyingRage") && Player.Instance.HealthPercent < healthQ)
+                if (autoQ && !User.HasBuff("UndyingRage") && User.HealthPercent < healthQ)
                 {
                     Q.Cast();
                 }
@@ -195,9 +195,7 @@ namespace LuVTryndamere
             {
                 var autoR = ComboMenu["user"].Cast<CheckBox>().CurrentValue;
                 var rhp = ComboMenu["rhp"].Cast<Slider>().CurrentValue;
-                if (!autoR || !(Player.Instance.HealthPercent < rhp)) return;
-                if (ObjectManager.Get<AIHeroClient>()
-                    .Any(x => x.IsEnemy && x.Distance(Player.Instance.Position) <= 1100))
+                if (!autoR || (User.HealthPercent < rhp)) return;
                 {
                     R.Cast();
                 }
