@@ -195,7 +195,7 @@ namespace LuVTryndamere
             {
                 var autoR = ComboMenu["user"].Cast<CheckBox>().CurrentValue;
                 var rhp = ComboMenu["rhp"].Cast<Slider>().CurrentValue;
-                if (!autoR || (User.HealthPercent < rhp)) return;
+                if (!autoR || (User.HealthPercent > rhp)) return;
                 {
                     R.Cast();
                 }
