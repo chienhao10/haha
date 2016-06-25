@@ -178,7 +178,7 @@ namespace LuVTryndamere
             if (ComboMenu["useE"].Cast<CheckBox>().CurrentValue)
             {
                 var pred = E.GetPrediction(target);
-                if (target.IsValidTarget(E.Range) && E.IsReady() && pred.HitChance >= HitChance.High)
+                if (target.IsValidTarget(E.Range) && E.IsReady() && pred.HitChance >= HitChance.High && !User.IsDead)
                 {
                     E.Cast(target);
                 }
@@ -186,14 +186,14 @@ namespace LuVTryndamere
 
             if (ComboMenu["useW"].Cast<CheckBox>().CurrentValue)
             {
-                if (target.IsValidTarget(W.Range) && W.IsReady())
+                if (target.IsValidTarget(W.Range) && W.IsReady() && !User.IsDead)
                 {
                     W.Cast();
                 }
             }
             if (ComboMenu["useR"].Cast<CheckBox>().CurrentValue)
             {
-                var rhp = ComboMenu["rhp"].Cast<Slider>().CurrentValue;
+                var rhp = MiscMenu["rhp"].Cast<Slider>().CurrentValue;
                 if (User.HealthPercent < rhp)
                 {
                     R.Cast();
