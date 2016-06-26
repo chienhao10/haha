@@ -593,31 +593,24 @@
 
         public static void JungleClear()
         {
-            var useE = JungleMenu["useE"].Cast<CheckBox>().CurrentValue;
-            var mob =
-                EntityManager.MinionsAndMonsters.GetJungleMonsters()
-                    .OrderByDescending(j => j.Health)
+            if (!E.IsReady() || !JungleMenu["useE"].Cast<CheckBox>().CurrentValue) return;
+            var mob = EntityManager.MinionsAndMonsters.GetJungleMonsters()
+                    .OrderByDescending(j => j.MaxHealth)
                     .FirstOrDefault(j => j.IsValidTarget(E.Range));
-            if (mob == null)
-            {
-                return;
-            }
-            if (useE && E.IsReady() && mob.IsValidTarget(E.Range))
-            {
+            if (mob != null)
                 E.Cast(mob);
-            }
         }
 
         private static void LaneClear()
         {
             var useE = LaneMenu["useE"].Cast<CheckBox>().CurrentValue;
             var minions =
-                ObjectManager.Get<Obj_AI_Base>().OrderBy(m => m.Health).Where(m => m.IsMinion && m.IsEnemy && !m.IsDead);
-            foreach (var minion in minions)
+                EntityManager.MinionsAndMonsters.EnemyMinions.OrderByDescending(j => j.MaxHealth)
+                    .FirstOrDefault(j => j.IsValidTarget(E.Range));
             {
-                if (useE && E.IsReady() && minion.IsValidTarget(850) && minions.Count() >= 3)
+                if (useE && E.IsReady() && minions.IsValidTarget(850))
                 {
-                    E.Cast(minion);
+                    E.Cast(minions);
                 }
             }
         }
