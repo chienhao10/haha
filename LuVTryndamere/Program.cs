@@ -131,11 +131,12 @@
             ItemMenu = MwMenu.AddSubMenu("Items");
             /*
             LanguageMenu = MwMenu.AddSubMenu("Language");
-            */
+
             if (SummonerSpells.Smite.IsLearned)
             {
                 SmiteMenu = MwMenu.AddSubMenu(("Smite"));
             }
+            */
             DrawingsMenu = MwMenu.AddSubMenu("Drawing");
 
             MwMenu.AddGroupLabel("Welcome Summoner!");
@@ -148,7 +149,7 @@
             ComboMenu.Add("useR", new CheckBox("Use R"));
             ComboMenu.AddSeparator();
             ComboMenu.AddGroupLabel("Combo Sumoner Spells");
-            ComboMenu.AddLabel("Smite Feature Will Be On If You Have Smite");
+            ComboMenu.AddLabel("Smite Feature Will Be On If You Have Smite(Not Yet Added)");
             ComboMenu.Add("ign", new CheckBox("Use Combo Ignite"));
             ComboMenu.Add("exh", new CheckBox("Use Combo Exhaust"));
 
@@ -229,7 +230,9 @@
             MiscMenu.Add("rhp", new Slider("Hp% Use R", 25, 0, 95));
             MiscMenu.AddGroupLabel("Killsteal");
             MiscMenu.Add("kse", new CheckBox("KS E"));
+            /*
             MiscMenu.Add("ksfe", new CheckBox("KS Flash + E"));
+            */
             MiscMenu.AddSeparator();
             /*
             LanguageMenu.AddSubMenu("Switch Language");
@@ -237,7 +240,7 @@
             DrawingsMenu.Add("nocds", new CheckBox("Only Draw Spells Are Ready"));
             DrawingsMenu.Add("text", new CheckBox("Show R Text"));
             DrawingsMenu.Add("drawekill", new CheckBox("Draw E Killable (E Range)"));
-            DrawingsMenu.Add("Track", new CheckBox("Track"));
+            DrawingsMenu.Add("Track", new CheckBox("Track Enemy Team Health"));
             DrawingsMenu.Add("aacount", new CheckBox("Show AA To Kill"));
             DrawingsMenu.Add("rbuf", new CheckBox("Show R Buff Timer"));
             /*
@@ -419,12 +422,12 @@
                 Harass();
             }
 
-            if (Orbwalker.ActiveModesFlags.Equals(Orbwalker.ActiveModes.LaneClear))
+            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LaneClear))
             {
                 LaneClear();
             }
 
-            if (Orbwalker.ActiveModesFlags.Equals(Orbwalker.ActiveModes.JungleClear))
+            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.JungleClear))
             {
                 JungleClear();
             }
@@ -553,7 +556,7 @@
 
             if (ComboMenu["useW"].Cast<CheckBox>().CurrentValue)
             {
-                if (target.IsValidTarget(W.Range) && W.IsReady())
+                if (target.IsValidTarget(W.Range) && target.IsFacing()&& W.IsReady())
                 {
                     W.Cast();
                 }
@@ -598,7 +601,7 @@
                     .OrderByDescending(j => j.MaxHealth)
                     .FirstOrDefault(j => j.IsValidTarget(E.Range));
             if (mob != null)
-                E.Cast(mob);
+                E.Cast(mob.Position);
         }
 
         private static void LaneClear()
@@ -610,7 +613,7 @@
             {
                 if (useE && E.IsReady() && minions.IsValidTarget(850))
                 {
-                    E.Cast(minions);
+                    E.Cast(minions.Position);
                 }
             }
         }
