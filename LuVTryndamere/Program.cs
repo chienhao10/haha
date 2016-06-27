@@ -15,6 +15,7 @@
     using EloBuddy.SDK.Notifications;
     using EloBuddy.SDK.Rendering;
     using EloBuddy.SDK.Spells;
+    using LuVTryndamere.Utilities;
 
     using SharpDX;
 
@@ -31,9 +32,11 @@
 
         public static readonly Item Youmuu = new Item((int)ItemId.Youmuus_Ghostblade);
 
-        public static readonly Item Tiamat = new Item((int)ItemId.Tiamat);
+        public static Item Tiamat = new Item((int)ItemId.Tiamat_Melee_Only, 400);
 
-        public static readonly Item Hydra = new Item((int)ItemId.Ravenous_Hydra);
+        public static Item Hydra = new Item((int)ItemId.Ravenous_Hydra_Melee_Only, 400);
+
+        public static Item TriForce = new Item((int)ItemId.Trinity_Force);
 
         public static readonly Item Potion = new Item((int)ItemId.Health_Potion);
 
@@ -63,18 +66,18 @@
         };
         */
 
-        private static AIHeroClient User = Player.Instance;
+        public static AIHeroClient User = Player.Instance;
 
         private const string BuffsFormat =
             "DisplayName: {0} | Name: {1} | Caster: {2} | SourceName: {3} | Count: {4} | RemainingTime: {5}";
 
-        private static Spell.Active Q;
+        public static Spell.Active Q;
 
-        private static Spell.Active W;
+        public static Spell.Active W;
 
-        private static Spell.Skillshot E;
+        public static Spell.Skillshot E;
 
-        private static Spell.Active R;
+        public static Spell.Active R;
 
         private static bool ShowBuff;
 
@@ -84,7 +87,9 @@
                             JungleMenu,
                             LaneMenu,
                             FleeMenu,
+                            /*
                             SmiteMenu,
+                            */
                             ItemMenu,
                             DrawingsMenu,
                             MiscMenu /*, LanguageMenu*/;
@@ -260,7 +265,8 @@
 
             Game.OnTick += Game_OnTick;
             Drawing.OnDraw += Drawing_OnDraw;
-            ////DMG INDICATOR
+            ////DMG INDICATOR, only show up when enemy low, or i die
+            DamageIndicator.Initialize(SpellDamage.GetTotalDamage);
         }
 
         private static void Drawing_OnDraw(EventArgs args)
@@ -556,7 +562,7 @@
 
             if (ComboMenu["useW"].Cast<CheckBox>().CurrentValue)
             {
-                if (target.IsValidTarget(W.Range) && W.IsReady())
+                if (target.IsValidTarget(W.Range) && W.IsReady() && target.IsFacing(User))
                 {
                     W.Cast();
                 }
@@ -654,6 +660,7 @@
                     }
                 }
             }
+            /*
             if (MiscMenu["ksfe"].Cast<CheckBox>().CurrentValue || E.IsReady())
                 foreach (
                     var etarget in
@@ -667,6 +674,7 @@
                         E.Cast(etarget.ServerPosition);
                     }
                 }
+                */
         }
 
         private static void Items()
