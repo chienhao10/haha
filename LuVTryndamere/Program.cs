@@ -556,7 +556,7 @@
 
             if (ComboMenu["useW"].Cast<CheckBox>().CurrentValue)
             {
-                if (target.IsValidTarget(W.Range) && target.IsFacing()&& W.IsReady())
+                if (target.IsValidTarget(W.Range) && W.IsReady())
                 {
                     W.Cast();
                 }
