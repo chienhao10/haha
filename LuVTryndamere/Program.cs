@@ -449,7 +449,7 @@
             {
                 var autoQ = ComboMenu["useQ"].Cast<CheckBox>().CurrentValue;
                 var healthQ = MiscMenu["qhp"].Cast<Slider>().CurrentValue;
-                if (autoQ && !User.HasBuff("UndyingRage") && User.HealthPercent < healthQ)
+                if (autoQ && !User.HasBuff("UndyingRage") && !User.IsRecalling() && User.HealthPercent < healthQ)
                 {
                     Q.Cast();
                 }
