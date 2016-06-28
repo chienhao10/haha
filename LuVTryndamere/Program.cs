@@ -48,24 +48,6 @@
 
         public static readonly Item Corrupting = new Item(2033);
 
-        /*
-
-        public static Spell.Targeted Smite;
-
-        public static double TotalDamage = 0;
-
-        public static Obj_AI_Base Mobs;
-
-        public static string[] MonstersNames =
-        {
-            "TT_Spiderboss", "TTNGolem", "TTNWolf", "TTNWraith",
-            "SRU_Blue", "SRU_Gromp", "SRU_Murkwolf", "SRU_Razorbeak",
-            "SRU_Red", "SRU_Krug", "Sru_Crab", "SRU_Baron", "SRU_RiftHerald",
-            "SRU_Dragon_Elder", "SRU_Dragon_Air", "SRU_Dragon_Earth",
-            "SRU_Dragon_Fire", "SRU_Dragon_Water"
-        };
-        */
-
         public static AIHeroClient User = Player.Instance;
 
         private const string BuffsFormat =
@@ -81,15 +63,15 @@
 
         private static bool ShowBuff;
 
-        private static Menu MwMenu,
+        public static Menu MwMenu,
                             ComboMenu,
                             HarassMenu,
                             JungleMenu,
                             LaneMenu,
                             FleeMenu,
-                            /*
+
                             SmiteMenu,
-                            */
+                            
                             ItemMenu,
                             DrawingsMenu,
                             MiscMenu /*, LanguageMenu*/;
@@ -100,7 +82,18 @@
         {
             Loading.OnLoadingComplete += Loading_OnLoadingComplete;
         }
+        /*
+        public static float SmiteDmgMonster(Obj_AI_Base target)
+        {
+            return User.GetSummonerSpellDamage(target, DamageLibrary.SummonerSpells.Smite);
+        }
 
+        public static float SmiteDmgHero(AIHeroClient target)
+        {
+            return User.CalculateDamageOnUnit(target, DamageType.True,
+                20.0f + User.Level * 8.0f);
+        }
+        */
         private static void Loading_OnLoadingComplete(EventArgs args)
         {
             if (User.ChampionName != "Tryndamere")
@@ -136,12 +129,8 @@
             ItemMenu = MwMenu.AddSubMenu("Items");
             /*
             LanguageMenu = MwMenu.AddSubMenu("Language");
-
-            if (SummonerSpells.Smite.IsLearned)
-            {
-                SmiteMenu = MwMenu.AddSubMenu(("Smite"));
-            }
             */
+            
             DrawingsMenu = MwMenu.AddSubMenu("Drawing");
 
             MwMenu.AddGroupLabel("Welcome Summoner!");
@@ -192,49 +181,18 @@
             ItemMenu.Add("bis", new CheckBox("Use Biscuit"));
             ItemMenu.Add("mh", new Slider("Hp% Use Potion", 75, 0, 100));
             ItemMenu.AddSeparator();
-            /*
-            if (SummonerSpells.Smite.IsLearned)
-            {
-                SmiteMenu.AddGroupLabel("Smite Spell");
-                SmiteMenu.Add("sco", new CheckBox("Use Smite In Combo"));
-                SmiteMenu.Add("killsmite", new CheckBox("Use Smite To KS"));
-                SmiteMenu.Add("sjg", new CheckBox ("Use Smite in Jungle"));
-                SmiteMenu.AddGroupLabel("Smite Disable will Disable All Smite Features");
-                SmiteMenu.Add("activekey", new KeyBind("Smite Activated", false, KeyBind.BindTypes.PressToggle, 'M'));
-
-                if (Game.MapId == GameMapId.TwistedTreeline)
-                {
-                    SmiteMenu.AddGroupLabel("Mobs Settings");
-                    SmiteMenu.Add("TT_Spiderboss", new CheckBox("Vilemaw Enabled"));
-                    SmiteMenu.Add("TT_NGolem", new CheckBox("Golem Enabled"));
-                    SmiteMenu.Add("TT_NWolf", new CheckBox("Wolf Enabled"));
-                    SmiteMenu.Add("TT_NWraith", new CheckBox("Wraith Enabled"));
-                }
-                if (Game.MapId == GameMapId.SummonersRift)
-                {
-                    SmiteMenu.AddGroupLabel("Mobs Settings");
-                    SmiteMenu.Add("SRU_Baron", new CheckBox("Baron Enabled"));
-                    SmiteMenu.Add("SRU_RiftHerald", new CheckBox("RiftHerald Enabled"));
-                    SmiteMenu.Add("SRU_Blue", new CheckBox("Blue Enabled"));
-                    SmiteMenu.Add("SRU_Red", new CheckBox("Red Enabled"));
-                    SmiteMenu.Add("SRU_Gromp", new CheckBox("Gromp Enabled"));
-                    SmiteMenu.Add("SRU_Murkwolf", new CheckBox("Murkwolf Enabled"));
-                    SmiteMenu.Add("SRU_Krug", new CheckBox("Krug Enabled"));
-                    SmiteMenu.Add("SRU_Razorbeak", new CheckBox("Razorbeak Enabled"));
-                    SmiteMenu.Add("Sru_Crab", new CheckBox("Crab Enabled"));
-                    SmiteMenu.Add("SRU_Dragon_Elder", new CheckBox("Dragon Elder Enabled"));
-                    SmiteMenu.Add("SRU_Dragon_Air", new CheckBox("Dragon Air Enabled"));
-                    SmiteMenu.Add("SRU_Dragon_Earth", new CheckBox("Dragon Earth Enabled"));
-                    SmiteMenu.Add("SRU_Dragon_Fire", new CheckBox("Dragon Fire Enabled"));
-                    SmiteMenu.Add("SRU_Dragon_Water", new CheckBox("Dragon Water Enabled"));
-                 }
-              }
-              */
+              
             MiscMenu.AddGroupLabel("Global Settings");
             MiscMenu.Add("qhp", new Slider("Hp% Use Q", 30, 0, 95));
             MiscMenu.Add("rhp", new Slider("Hp% Use R", 25, 0, 95));
             MiscMenu.AddGroupLabel("Killsteal");
             MiscMenu.Add("kse", new CheckBox("KS E"));
+            MiscMenu.AddGroupLabel("Sumoner Spells Settings");
+            MiscMenu.Add("bari", new CheckBox("Barrier"));
+            MiscMenu.Add("brp", new Slider("Hp% Use Barrier", 15, 0, 100));
+            MiscMenu.Add("heal", new CheckBox("Heal"));
+            MiscMenu.Add("hep", new Slider("Hp% Use Heal", 15, 0, 100));
+
             /*
             MiscMenu.Add("ksfe", new CheckBox("KS Flash + E"));
             */
@@ -248,13 +206,8 @@
             DrawingsMenu.Add("Track", new CheckBox("Track Enemy Team Health"));
             DrawingsMenu.Add("aacount", new CheckBox("Show AA To Kill"));
             DrawingsMenu.Add("rbuf", new CheckBox("Show R Buff Timer"));
-            /*
-            if (SummonerSpells.Smite.IsLearned)
-            {
-                DrawingsMenu.Add("senab", new CheckBox("Draw Smite Status"));
-                DrawingsMenu.Add("dsmite", new CheckBox("Draw Smite Range"));
-            }
-            */
+            DrawingsMenu.Add("smitestatus1", new CheckBox("Draw Smite Status"));
+
             foreach (var Spell in SpellList)
             {
                 if (!User.IsDead)
@@ -262,9 +215,15 @@
                     DrawingsMenu.Add(Spell.Slot.ToString(), new CheckBox("Draw " + Spell.Slot));
                 }
             }
-
+            /*
+            if (Utilities.Activator.Heal != null)
+                Heal();
+            if (Utilities.Activator.Barrier != null)
+                Barrier();
+                */
             Game.OnTick += Game_OnTick;
             Drawing.OnDraw += Drawing_OnDraw;
+            /*Utilities.Activator.LoadSpells();*/
             ////DMG INDICATOR, only show up when enemy low, or i die
             DamageIndicator.Initialize(SpellDamage.GetTotalDamage);
         }
@@ -331,6 +290,15 @@
                         System.Drawing.Color.White,
                         "R Ready");
                 }
+            }
+
+            if (DrawingsMenu["smitestatus1"].Cast<CheckBox>().CurrentValue)
+            {
+                Drawing.DrawText(User.HPBarPosition.X - 40, User.HPBarPosition.Y + 20, System.Drawing.Color.FloralWhite, "Smite:");
+                Drawing.DrawText(User.HPBarPosition.X + 10, User.HPBarPosition.Y + 20,
+                    SmiteMenu["smiteActive"].Cast<KeyBind>().CurrentValue ? System.Drawing.Color.LimeGreen : System.Drawing.Color.Red,
+                    SmiteMenu["smiteActive"].Cast<KeyBind>().CurrentValue ? "On" : "Off");
+
             }
             /*
             if (DrawingsMenu.Get<CheckBox>("senab").CurrentValue)
@@ -444,6 +412,12 @@
             }
 
             Killsteal();
+            Smite.Smitemethod();
+
+            if (ItemMenu["pots"].Cast<CheckBox>().CurrentValue)
+            {
+                AutoPotions();
+            }
 
             if (ComboMenu["useQ"].Cast<CheckBox>().CurrentValue)
             {
@@ -465,20 +439,6 @@
             }
 
             /*
-            if (SmiteMenu["sjg"].Cast<CheckBox>().CurrentValue || SmiteMenu["activekey"].Cast<KeyBind>().CurrentValue)
-            {
-                Mobs = GetNearest(ObjectManager.Player.ServerPosition);
-                if (Mobs != null && Smite.IsReady() 
-                    && Vector3.Distance(ObjectManager.Player.ServerPosition, Mobs.ServerPosition) < Smite.Range 
-                    && SmiteMenu[Mobs.BaseSkinName].Cast<CheckBox>().CurrentValue)
-                    {
-                        if (Mobs.Health <= GetSmiteDamage())
-                        {
-                            Smite.Cast(Mobs);
-                        }
-                        TotalDamage = 0;
-                    }
-            }
 
             if (SmiteMenu["activekey"].Cast<CheckBox>().CurrentValue)
             {
@@ -492,11 +452,6 @@
                 }
             }
             */
-
-            if (ItemMenu["pots"].Cast<CheckBox>().CurrentValue)
-            {
-                Potions();
-            }
 
         }
 
@@ -519,6 +474,25 @@
             return NearestMonster;
         }
         */
+
+        private static void Barrier()
+        {
+            var target = TargetSelector.GetTarget(E.Range, DamageType.Physical);
+
+            if (User.IsFacing(target) && Utilities.Activator.Barrier.IsReady() && MiscMenu["bari"].Cast<CheckBox>().CurrentValue &&
+                User.HealthPercent <= MiscMenu["brp"].Cast<Slider>().CurrentValue)
+                Utilities.Activator.Barrier.Cast();
+        }
+
+        private static void Heal()
+        {
+            if (Utilities.Activator.Heal != null && MiscMenu["heal"].Cast<CheckBox>().CurrentValue && Utilities.Activator.Heal.IsReady() &&
+                User.HealthPercent <= ItemMenu["hep"].Cast<Slider>().CurrentValue
+                && User.CountEnemiesInRange(600) > 0 && Utilities.Activator.Heal.IsReady())
+            {
+                Utilities.Activator.Heal.Cast();
+            }
+        }
 
         private static void Combo()
         {
@@ -660,6 +634,7 @@
                     }
                 }
             }
+
             /*
             if (MiscMenu["ksfe"].Cast<CheckBox>().CurrentValue || E.IsReady())
                 foreach (
@@ -723,6 +698,7 @@
             }
         }
 
+        /*
         private static void Potions()
         {
             if (User.IsInShopRange() || User.IsRecalling() || User.HasBuff("RegenerationPotion")
@@ -761,7 +737,49 @@
             }
 
         }
+        */
 
+        private static void AutoPotions()
+        {
+            if (ItemMenu.Get<CheckBox>("pots").CurrentValue && !User.IsInShopRange() &&
+                User.HealthPercent <= MiscMenu["mh"].Cast<Slider>().CurrentValue &&
+                !(User.HasBuff("RegenerationPotion") || User.HasBuff("ItemCrystalFlaskJungle") ||
+                  User.HasBuff("ItemMiniRegenPotion") || User.HasBuff("ItemCrystalFlask") ||
+                  User.HasBuff("ItemDarkCrystalFlask")))
+            {
+                if (Utilities.Activator.HuntersPot.IsReady() && Utilities.Activator.HuntersPot.IsOwned())
+                {
+                    Utilities.Activator.HuntersPot.Cast();
+                }
+                if (Utilities.Activator.CorruptPot.IsReady() && Utilities.Activator.CorruptPot.IsOwned())
+                {
+                    Utilities.Activator.CorruptPot.Cast();
+                }
+                if (Utilities.Activator.Biscuit.IsReady() && Utilities.Activator.Biscuit.IsOwned())
+                {
+                    Utilities.Activator.Biscuit.Cast();
+                }
+                if (Utilities.Activator.HpPot.IsReady() && Utilities.Activator.HpPot.IsOwned())
+                {
+                    Utilities.Activator.HpPot.Cast();
+                }
+                if (Utilities.Activator.RefillPot.IsReady() && Utilities.Activator.RefillPot.IsOwned())
+                {
+                    Utilities.Activator.RefillPot.Cast();
+                }
+            }
+            if (ItemMenu.Get<CheckBox>("pots").CurrentValue && !User.IsInShopRange() &&
+                User.ManaPercent <= MiscMenu["mh"].Cast<Slider>().CurrentValue &&
+                !(User.HasBuff("RegenerationPotion") || User.HasBuff("ItemCrystalFlaskJungle") ||
+                  User.HasBuff("ItemMiniRegenPotion") || User.HasBuff("ItemCrystalFlask") ||
+                  User.HasBuff("ItemDarkCrystalFlask")))
+            {
+                if (Utilities.Activator.CorruptPot.IsReady() && Utilities.Activator.CorruptPot.IsOwned())
+                {
+                    Utilities.Activator.CorruptPot.Cast();
+                }
+            }
+        }
         private static void CountR()
         {
             if (ShowBuff && User != null)
