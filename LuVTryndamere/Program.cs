@@ -69,9 +69,6 @@
                             JungleMenu,
                             LaneMenu,
                             FleeMenu,
-
-                            SmiteMenu,
-                            
                             ItemMenu,
                             DrawingsMenu,
                             MiscMenu /*, LanguageMenu*/;
@@ -292,21 +289,25 @@
                 }
             }
 
+            var heropos = Drawing.WorldToScreen(ObjectManager.Player.Position);
             if (DrawingsMenu["smitestatus1"].Cast<CheckBox>().CurrentValue)
             {
-                Drawing.DrawText(User.HPBarPosition.X - 40, User.HPBarPosition.Y + 20, System.Drawing.Color.FloralWhite, "Smite:");
-                Drawing.DrawText(User.HPBarPosition.X + 10, User.HPBarPosition.Y + 20,
-                    SmiteMenu["smiteActive"].Cast<KeyBind>().CurrentValue ? System.Drawing.Color.LimeGreen : System.Drawing.Color.Red,
-                    SmiteMenu["smiteActive"].Cast<KeyBind>().CurrentValue ? "On" : "Off");
-
+                Drawing.DrawText(heropos.X - 40, heropos.Y + 20, System.Drawing.Color.FloralWhite, "Smite:");
+                Drawing.DrawText(
+                    heropos.X + 10,
+                    heropos.Y + 20,
+                    Smite.SmiteMenu["smiteActive"].Cast<KeyBind>().CurrentValue
+                        ? System.Drawing.Color.LimeGreen
+                        : System.Drawing.Color.Red,
+                    Smite.SmiteMenu["smiteActive"].Cast<KeyBind>().CurrentValue ? "On" : "Off");
             }
             /*
-            if (DrawingsMenu.Get<CheckBox>("senab").CurrentValue)
-            {
-                Drawing.DrawText(User.HPBarPosition.X + 50,User.HPBarPosition.Y + 250,System.Drawing.Color.WhiteSmoke,"Smite:On");
-            }
-            */
-            if (DrawingsMenu.Get<CheckBox>("Track").CurrentValue)
+                if (DrawingsMenu.Get<CheckBox>("senab").CurrentValue)
+                {
+                    Drawing.DrawText(User.HPBarPosition.X + 50,User.HPBarPosition.Y + 250,System.Drawing.Color.WhiteSmoke,"Smite:On");
+                }
+                */
+                if (DrawingsMenu.Get<CheckBox>("Track").CurrentValue)
             {
                 DrawEnemyHealth();
             }
@@ -413,12 +414,12 @@
 
             Killsteal();
             Smite.Smitemethod();
-
+            /*
             if (ItemMenu["pots"].Cast<CheckBox>().CurrentValue)
             {
                 AutoPotions();
             }
-
+            */
             if (ComboMenu["useQ"].Cast<CheckBox>().CurrentValue)
             {
                 var autoQ = ComboMenu["useQ"].Cast<CheckBox>().CurrentValue;
@@ -456,25 +457,7 @@
         }
 
         /*
-        public static Obj_AI_Minion GetNearest(Vector3 pos)
-        {
-            var mobs = ObjectManager.Get<Obj_AI_Minion>().Where(minion => minion.IsValid && MonstersNames.Any(name => minion.Name.ToLower().StartsWith(name.ToLower())) && !MonstersNames.Any(name => minion.Name.Contains("Mini")) && !MonstersNames.Any(name => minion.Name.Contains("Spawn")));
-            var objAimobs = mobs as Obj_AI_Minion[] ?? mobs.ToArray();
-            Obj_AI_Minion NearestMonster = objAimobs.FirstOrDefault();
-            double? nearest = null;
-            foreach (Obj_AI_Minion Monster in objAimobs)
-            {
-                double distance = Vector3.Distance(pos, Monster.Position);
-                if (nearest == null || nearest > distance)
-                {
-                    nearest = distance;
-                    NearestMonster = Monster;
-                }
-            }
-            return NearestMonster;
-        }
-        */
-
+        
         private static void Barrier()
         {
             var target = TargetSelector.GetTarget(E.Range, DamageType.Physical);
@@ -493,7 +476,7 @@
                 Utilities.Activator.Heal.Cast();
             }
         }
-
+        */
         private static void Combo()
         {
             var target = TargetSelector.GetTarget(E.Range, DamageType.Physical);
@@ -737,7 +720,7 @@
             }
 
         }
-        */
+        
 
         private static void AutoPotions()
         {
@@ -780,6 +763,7 @@
                 }
             }
         }
+        */
         private static void CountR()
         {
             if (ShowBuff && User != null)

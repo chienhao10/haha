@@ -30,10 +30,11 @@ namespace LuVTryndamere.Utilities
 
         private static readonly int[] SmiteRed = { 3715, 3718, 3717, 3716, 3714, 3931, 1415, 1419, 1401 };
         private static readonly int[] SmiteBlue = { 3706, 3710, 3709, 3708, 3707, 3930, 1416 };
+        public static Menu SmiteMenu;
 
         public static void Smitemethod()
         {
-            SmiteMenu = MwMenu.AddSubMenu(("Smite"));
+            SmiteMenu = MainMenu.AddMenu("Smite","test");
             SmiteMenu.AddSeparator();
             SmiteMenu.Add("smiteActive",
                    new KeyBind("Smite Active (toggle)", true, KeyBind.BindTypes.PressToggle, 'M'));
@@ -104,14 +105,14 @@ namespace LuVTryndamere.Utilities
         {
             SetSmiteSlot();
             if (!SmiteSpell.IsReady() || User.IsDead) return;
-            if (LuVTryndamere.SmiteMenu["smiteActive"].Cast<KeyBind>().CurrentValue)
+            if (SmiteMenu["smiteActive"].Cast<KeyBind>().CurrentValue)
             {
                 var unit =
                     EntityManager.MinionsAndMonsters.Monsters
                         .Where(
                             a =>
                                 SmiteableUnits.Contains(a.BaseSkinName) && a.Health < GetSmiteDamage() &&
-                                LuVTryndamere.SmiteMenu[a.BaseSkinName].Cast<CheckBox>().CurrentValue)
+                                SmiteMenu[a.BaseSkinName].Cast<CheckBox>().CurrentValue)
                         .OrderByDescending(a => a.MaxHealth)
                         .FirstOrDefault();
 
@@ -121,19 +122,19 @@ namespace LuVTryndamere.Utilities
                     return;
                 }
             }
-            if (LuVTryndamere.SmiteMenu["useSlowSmite"].Cast<CheckBox>().CurrentValue &&
+            if (SmiteMenu["useSlowSmite"].Cast<CheckBox>().CurrentValue &&
                 SmiteSpell.Handle.Name == "s5_summonersmiteplayerganker")
             {
                 foreach (
                     var target in
                         EntityManager.Heroes.Enemies
-                            .Where(h => h.IsValidTarget(SmiteSpell.Range) && h.Health <= 20 + 8 * Player.Level))
+                            .Where(h => h.IsValidTarget(SmiteSpell.Range) && h.Health <= 20 + 8 * User.Level))
                 {
                     SmiteSpell.Cast(target);
                     return;
                 }
             }
-            if (LuVTryndamere.SmiteMenu["comboWithDuelSmite"].Cast<CheckBox>().CurrentValue &&
+            if (SmiteMenu["comboWithDuelSmite"].Cast<CheckBox>().CurrentValue &&
                 SmiteSpell.Handle.Name == "s5_summonersmiteduel" &&
                 Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
             {
